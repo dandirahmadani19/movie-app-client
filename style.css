@@ -1,0 +1,55 @@
+body {
+    background-color: #e8eaed;
+}
+.container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+    overflow: hidden;
+}
+.content {
+    width: 40%;
+    background-color: #fff;
+    padding: 20px 50px 10px 50px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.content h2 {
+    text-align: center;
+    margin-bottom: 10%;
+}
+#btn-login, #btn-register {
+    width: 100%;
+}
+#my-signin2{
+    max-width: 100%;
+}
+#btn-add-movie {
+    width: 40%;
+}
+#img-movie {
+    width: 120px;
+    height: 140px;
+    object-fit: cover;
+}
+#loading-section {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.modal-dialog-video-trailer {
+    max-width: 800px;
+    margin: 30px auto;
+}
+.btn-close-video-trailer {
+    position:absolute;
+    right:-30px;
+    top:0;
+}
+#footer-form-login-register{
+    font-size: 12px;
+    display: block;
+    text-align: center;
+    margin-top: 30px;
+}
