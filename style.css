@@ -1,5 +1,5 @@
 body {
-    background-color: #e8eaed;
+    background-color: #e8eaed;    
 }
 .container {
     height: 100vh;
@@ -34,8 +34,13 @@ body {
     height: 140px;
     object-fit: cover;
 }
-#loading-section {
-    position: absolute;
+.loading-section {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 100;
     background-color: rgba(0, 0, 0, 0.5);
 }
 .modal-dialog-video-trailer {

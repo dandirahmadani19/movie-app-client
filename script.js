@@ -1,23 +1,25 @@
-const BASE_URL = "http://localhost:10000";
+const BASE_URL = "https://movie-app-server-dandi.herokuapp.com";
 let currentAuthorId, currentAuthorRole;
 $(document).ready(() => {
   setDateToFooterForm();
-  hideLoading();
   showGenreToFormAddAndUpdateMovie();
-  gapi.signin2.render("my-signin2", {
-    scope: "profile email",
-    width: 350,
-    height: 50,
-    longtitle: true,
-    theme: "dark",
-    onsuccess: onSuccess,
-    onfailure: onFailure,
-  });
+  // gapi.signin2.render("my-signin2", {
+  //   scope: "profile email",
+  //   width: 350,
+  //   height: 50,
+  //   longtitle: true,
+  //   theme: "dark",
+  //   onsuccess: onSuccess,
+  //   onfailure: onFailure,
+  // });
   if (localStorage.getItem("access_token")) {
     isLogin();
   } else {
     isNotLogin();
   }
+  $(".g-signin2").on("click", function(){
+    showLoading();
+  })
 
   $("#form-login").on("submit", postLogin);
   $("#form-register").on("submit", postRegister);
@@ -95,9 +97,45 @@ function postRegister(event) {
       hideLoading();
     });
 }
-function onSuccess(googleUser) {
+// function onSuccess(googleUser) {
+//   const id_token = googleUser.getAuthResponse().id_token;
+//   showLoading();
+//   $.ajax({
+//     url: BASE_URL + "/users/login-google",
+//     method: "POST",
+//     data: {
+//       token: id_token,
+//     },
+//   })
+//     .done((data) => {
+//       localStorage.setItem("access_token", data.access_token);
+//       $("#table-movies").empty();
+//       isLogin();
+//     })
+//     .fail((err) => {
+//       const message = err.responseJSON.message;
+//       Swal.fire({
+//         icon: "error",
+//         title: "Oops...",
+//         text: message,
+//       });
+//     })
+//     .always(() => {
+//       hideLoading();
+//     });
+// }
+function onFailure(error) {
+  console.log(error);
+  Swal.fire({
+    icon: "error",
+    title: "Oops...",
+    text: "Failed to login using google account",
+  });
+  hideLoading();
+}
+function onSignIn(googleUser) {
+  // showLoading();
   const id_token = googleUser.getAuthResponse().id_token;
-  showLoading();
   $.ajax({
     url: BASE_URL + "/users/login-google",
     method: "POST",
@@ -121,14 +159,6 @@ function onSuccess(googleUser) {
     .always(() => {
       hideLoading();
     });
-}
-function onFailure(error) {
-  console.log(error);
-  Swal.fire({
-    icon: "error",
-    title: "Oops...",
-    text: "Failed to login using google account",
-  });
 }
 function signOut() {
   if (currentAuthorRole === "staff") {
@@ -266,10 +296,11 @@ function showGenreToFormAddAndUpdateMovie() {
     });
 }
 function addMovie(e) {
+  $("#modal-add-movie").modal("hide");
+  showLoading();
   e.preventDefault();
   const { title, synopsis, trailerUrl, imgUrl, rating, genreId } =
-    takeValueFromFormAddMovie();
-  showLoading();
+  takeValueFromFormAddMovie();
   $.ajax({
     url: BASE_URL + "/movies/add",
     method: "POST",
@@ -290,6 +321,7 @@ function addMovie(e) {
       $("#table-movies").empty();
       showMovies();
       Swal.fire("Success!", newMovie.message, "Ok");
+      clearInputAddModal();
     })
     .fail((err) => {
       console.log(err);
@@ -298,11 +330,14 @@ function addMovie(e) {
         icon: "error",
         title: "Oops...",
         text: message,
-      });
+        confirmButtonText: "Oke",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $("#modal-add-movie").modal("show");
+        }
+      })
     })
     .always(() => {
-      $("#modal-add-movie").modal("hide");
-      clearInputAddModal();
       hideLoading();
     });
 }
@@ -334,10 +369,11 @@ function showFormUpdateMovie(e) {
     });
 }
 function updateMovie(e) {
+  $("#modal-update-movie").modal("hide");
+  showLoading();
   e.preventDefault();
   const { id, title, synopsis, trailerUrl, imgUrl, rating, genreId } =
-    takeValueFromFormUpdateMovie();
-  showLoading();
+  takeValueFromFormUpdateMovie();
   $.ajax({
     url: BASE_URL + `/movies/update/${+id}`,
     method: "PUT",
@@ -356,7 +392,9 @@ function updateMovie(e) {
     .done((movie) => {
       $("#table-movies").empty();
       showMovies();
-      Swal.fire("Success!", movie.message, "Ok");
+      Swal.fire("Success!", movie.message, "Oke");
+      clearInputAddModal();
+
     })
     .fail((err) => {
       console.log(err);
@@ -365,11 +403,14 @@ function updateMovie(e) {
         icon: "error",
         title: "Oops...",
         text: message,
-      });
+        confirmButtonText: "Oke",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $("#modal-update-movie").modal("show");
+        }
+      })
     })
     .always(() => {
-      $("#modal-update-movie").modal("hide");
-      clearInputAddModal();
       hideLoading();
     });
 }
@@ -384,6 +425,7 @@ function showModalDelete(e) {
   });
 }
 function deleteMovie(movieId) {
+  $("#modal-delete-movie").modal("hide");
   showLoading();
   $.ajax({
     url: BASE_URL + `/movies/delete/${+movieId}`,
@@ -407,7 +449,6 @@ function deleteMovie(movieId) {
       });
     })
     .always(() => {
-      $("#modal-delete-movie").modal("hide");
       hideLoading();
     });
 }
@@ -441,12 +482,26 @@ function clearInput(form) {
   $(`#password-${form}`).val("");
 }
 function showLoading() {
-  $("#loading-section").css("width", "100%");
-  $("#loading-section").css("height", "100%");
+  const loading = `
+    <div class="spinner-grow text-danger" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-grow text-warning" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-grow text-info" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  `;
+  $("body").css("overflow", "hidden");
+  $("#loading-section").addClass("d-flex justify-content-center align-items-center loading-section");
+  $("#loading-section").append(loading);
+
 }
 function hideLoading() {
-  $("#loading-section").css("width", 0);
-  $("#loading-section").css("height", 0);
+  $("body").css("overflow", "scroll");
+  $("#loading-section").empty();
+  $("#loading-section").removeClass("d-flex justify-content-center align-items-center loading-section");
 }
 function takeValueFromFormAddMovie() {
   const title = $("#title-add-movie").val();

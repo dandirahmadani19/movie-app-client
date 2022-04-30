@@ -26,6 +26,7 @@
   </head>
 
   <body>
+    <div class="container-fluid main-container">
     <div id="app">
 <!-- ============================================ Side Bar ============================================ -->
       <div id="sidebar" class="active">
@@ -210,7 +211,8 @@
           <div class="d-flex justify-content-center mb-3">
             Atau Masuk Dengan
           </div>
-          <div id="my-signin2"></div>
+          <!-- <div id="my-signin2"></div> -->
+          <div class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onFailure"></div>
         </form>
         <span id="footer-form-login-register">&copy;<span id="date"></span> - Movie App</span>
       </div>
@@ -254,23 +256,9 @@
       </div>
 <!-- ============================================ Form Register ============================================ -->
 
-<!-- ============================================ Loading ============================================ -->
-      <div
-        class="d-flex justify-content-center align-items-center"
-        id="loading-section"
-      >
-        <div class="spinner-grow text-danger" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-        <div class="spinner-grow text-warning" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-        <div class="spinner-grow text-info" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
-<!-- ============================================ Loading ============================================ -->
-    </div>
+  </div>
+
+  </div>
 
 <!-- ================================modal add movie ======================================================== -->
     <div
@@ -541,6 +529,11 @@
   </div>
 </div> 
 <!-- ================================================Modal Watch Trailer================================================-->
+
+<!-- ============================================ Loading ============================================ -->
+<div id="loading-section">
+</div>
+<!-- ============================================ Loading ============================================ -->
 
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
